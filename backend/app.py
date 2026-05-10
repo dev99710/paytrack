@@ -2,7 +2,7 @@ from flask import Flask
 from flask_jwt_extended import JWTManager
 from flask_cors import CORS
 from config import JWT_SECRET
-
+from workers.queue import start_worker
 from routes.auth import auth_bp
 from routes.statements import statements_bp
 from routes.transactions import transactions_bp
@@ -20,6 +20,7 @@ def create_app():
     CORS(app, resources={r"/api/*": {"origins": "*"}})
     JWTManager(app)
 
+    start_worker()
     app.register_blueprint(auth_bp, url_prefix="/api/auth")
     app.register_blueprint(statements_bp, url_prefix="/api/statements")
     app.register_blueprint(transactions_bp, url_prefix="/api/transactions")

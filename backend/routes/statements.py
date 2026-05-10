@@ -1,2 +1,53 @@
-from flask import Blueprint
-statements_bp = Blueprint('statements', __name__)
+from flask import Blueprint, request, jsonify
+from flask_jwt_extended import jwt_required, get_jwt_identity
+import uuid
+from db import supabase
+from workers.queue import enqueue, get_job
+
+statements_bp = Blueprint("statements", __name__)
+
+
+@statements_bp.route("/upload", methods=["POST"])
+@jwt_required()
+def upload():
+    user_id = get_jwt_identity()
+
+    if "file" not in request.files:
+        return jsonify({"error": "No file provided"}), 400
+
+    file = request.files["file"]
+    filename = file.filename
+
+    if not filename.endswith((".pdf", ".csv")):
+        return jsonify({"error": "Only PDF and CSV files supported"}), 400
+
+    file_bytes = list(file.read())
+
+    # Create statement record
+    statement_id = str(uuid.uuid4())
+    supabase.table("statements").insert(
+        {"id": statement_id, "user_id": user_id, "status": "pending"}
+    ).execute()
+
+    # Enqueue job
+    job_id = str(uuid.uuid4())
+    enqueue(
+        job_id,
+        {
+            "user_id": user_id,
+            "statement_id": statement_id,
+            "file_bytes": file_bytes,
+            "filename": filename,
+        },
+    )
+
+    return jsonify({"job_id": job_id, "statement_id": statement_id}), 202
+
+
+@statements_bp.route("/job/<job_id>", methods=["GET"])
+@jwt_required()
+def job_status(job_id):
+    job = get_job(job_id)
+    if not job:
+        return jsonify({"error": "Job not found"}), 404
+    return jsonify(job), 200
