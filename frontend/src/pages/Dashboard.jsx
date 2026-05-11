@@ -78,14 +78,6 @@ export default function Dashboard() {
     )
   }
 
-  if (error) {
-    return (
-      <div style={{ padding: '2rem', background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: '12px', color: 'var(--danger)' }}>
-        <strong>Error:</strong> {error}
-      </div>
-    )
-  }
-
   return (
     <div>
       <div style={{ marginBottom: '2rem' }}>

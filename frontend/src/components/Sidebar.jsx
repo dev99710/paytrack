@@ -1,5 +1,4 @@
-import { NavLink, useNavigate } from 'react-router-dom'
-import useAuthStore from '../store/authStore'
+import { NavLink } from 'react-router-dom'
 
 const NAV_LINKS = [
   {
@@ -105,14 +104,6 @@ const NAV_LINKS = [
 ]
 
 export default function Sidebar() {
-  const navigate = useNavigate()
-  const { user, logout } = useAuthStore()
-
-  const handleLogout = () => {
-    logout()
-    navigate('/login')
-  }
-
   return (
     <aside
       style={{
@@ -202,58 +193,6 @@ export default function Sidebar() {
         ))}
       </nav>
 
-      {/* User footer */}
-      <div
-        style={{
-          padding: '1rem 1.25rem',
-          borderTop: '1px solid var(--border)',
-        }}
-      >
-        <div
-          style={{
-            fontSize: '0.75rem',
-            color: 'var(--text-dim)',
-            marginBottom: '0.75rem',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-          }}
-        >
-          {user?.email || 'user@paytrack.io'}
-        </div>
-        <button
-          onClick={handleLogout}
-          style={{
-            width: '100%',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            padding: '0.6rem 0.75rem',
-            background: 'transparent',
-            border: '1px solid var(--border)',
-            borderRadius: '7px',
-            color: 'var(--text-secondary)',
-            fontSize: '0.8rem',
-            cursor: 'pointer',
-            transition: 'all 150ms ease',
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.borderColor = 'var(--danger)'
-            e.currentTarget.style.color = 'var(--danger)'
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.borderColor = 'var(--border)'
-            e.currentTarget.style.color = 'var(--text-secondary)'
-          }}
-        >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-            <polyline points="16 17 21 12 16 7" />
-            <line x1="21" y1="12" x2="9" y2="12" />
-          </svg>
-          Sign out
-        </button>
-      </div>
     </aside>
   )
 }

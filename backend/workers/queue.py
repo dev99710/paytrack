@@ -181,7 +181,7 @@ def process_job(job_id, payload):
             "done",
             result={
                 "txn_count": len(transactions),
-                "anomalies": len(anomaly_results),
+                "anomaly_count": len(anomaly_results),
                 "score": score_result["score"],
                 "grade": score_result["grade"],
                 "clusters": clusters[:10],

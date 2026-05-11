@@ -1,8 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom'
-import useAuthStore from './store/authStore'
 import Sidebar from './components/Sidebar'
-import Login from './pages/Login'
-import Register from './pages/Register'
 import Dashboard from './pages/Dashboard'
 import Upload from './pages/Upload'
 import Transactions from './pages/Transactions'
@@ -13,9 +10,7 @@ import HealthScore from './pages/HealthScore'
 import RuleEngine from './pages/RuleEngine'
 import AuditLog from './pages/AuditLog'
 
-function ProtectedRoute() {
-  const token = useAuthStore((s) => s.token)
-  if (!token) return <Navigate to="/login" replace />
+function Layout() {
   return (
     <div style={{ display: 'flex', height: '100vh', background: 'var(--bg-base)' }}>
       <Sidebar />
@@ -33,24 +28,11 @@ function ProtectedRoute() {
   )
 }
 
-function PublicRoute() {
-  const token = useAuthStore((s) => s.token)
-  if (token) return <Navigate to="/" replace />
-  return <Outlet />
-}
-
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Public */}
-        <Route element={<PublicRoute />}>
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-        </Route>
-
-        {/* Protected */}
-        <Route element={<ProtectedRoute />}>
+        <Route element={<Layout />}>
           <Route path="/" element={<Dashboard />} />
           <Route path="/upload" element={<Upload />} />
           <Route path="/transactions" element={<Transactions />} />
@@ -61,8 +43,6 @@ export default function App() {
           <Route path="/rules" element={<RuleEngine />} />
           <Route path="/audit" element={<AuditLog />} />
         </Route>
-
-        {/* Fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>

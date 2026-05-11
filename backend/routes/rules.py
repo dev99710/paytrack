@@ -1,15 +1,14 @@
 from flask import Blueprint, request, jsonify
-from flask_jwt_extended import jwt_required, get_jwt_identity
 from db import supabase
 import uuid
+from config import DEV_USER_ID
 
 rules_bp = Blueprint("rules", __name__)
 
 
 @rules_bp.route("/", methods=["GET"])
-@jwt_required()
 def get_rules():
-    user_id = get_jwt_identity()
+    user_id = DEV_USER_ID
     result = (
         supabase.table("rules")
         .select("*")
@@ -21,9 +20,8 @@ def get_rules():
 
 
 @rules_bp.route("/", methods=["POST"])
-@jwt_required()
 def create_rule():
-    user_id = get_jwt_identity()
+    user_id = DEV_USER_ID
     data = request.get_json()
     result = (
         supabase.table("rules")
@@ -44,9 +42,8 @@ def create_rule():
 
 
 @rules_bp.route("/<rule_id>", methods=["PATCH"])
-@jwt_required()
 def update_rule(rule_id):
-    user_id = get_jwt_identity()
+    user_id = DEV_USER_ID
     data = request.get_json()
     result = (
         supabase.table("rules")
@@ -59,8 +56,7 @@ def update_rule(rule_id):
 
 
 @rules_bp.route("/<rule_id>", methods=["DELETE"])
-@jwt_required()
 def delete_rule(rule_id):
-    user_id = get_jwt_identity()
+    user_id = DEV_USER_ID
     supabase.table("rules").delete().eq("id", rule_id).eq("user_id", user_id).execute()
     return jsonify({"message": "Rule deleted"}), 200

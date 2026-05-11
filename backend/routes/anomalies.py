@@ -1,14 +1,13 @@
 from flask import Blueprint, request, jsonify
-from flask_jwt_extended import jwt_required, get_jwt_identity
 from db import supabase
+from config import DEV_USER_ID
 
 anomalies_bp = Blueprint("anomalies", __name__)
 
 
 @anomalies_bp.route("/", methods=["GET"])
-@jwt_required()
 def get_anomalies():
-    user_id = get_jwt_identity()
+    user_id = DEV_USER_ID
     severity = request.args.get("severity")
 
     query = (

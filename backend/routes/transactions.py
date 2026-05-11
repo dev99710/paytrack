@@ -1,15 +1,14 @@
 from flask import Blueprint, request, jsonify
-from flask_jwt_extended import jwt_required, get_jwt_identity
 from db import supabase
 from ml.categoriser import retrain_with_correction
+from config import DEV_USER_ID
 
 transactions_bp = Blueprint("transactions", __name__)
 
 
 @transactions_bp.route("/", methods=["GET"])
-@jwt_required()
 def get_transactions():
-    user_id = get_jwt_identity()
+    user_id = DEV_USER_ID
     category = request.args.get("category")
     txn_type = request.args.get("type")
     limit = int(request.args.get("limit", 100))
@@ -25,9 +24,8 @@ def get_transactions():
 
 
 @transactions_bp.route("/<txn_id>/category", methods=["PATCH"])
-@jwt_required()
 def update_category(txn_id):
-    user_id = get_jwt_identity()
+    user_id = DEV_USER_ID
     data = request.get_json()
     new_cat = data.get("category")
 

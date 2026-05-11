@@ -1,16 +1,15 @@
 from flask import Blueprint, request, jsonify
-from flask_jwt_extended import jwt_required, get_jwt_identity
 import uuid
 from db import supabase
 from workers.queue import enqueue, get_job
+from config import DEV_USER_ID
 
 statements_bp = Blueprint("statements", __name__)
 
 
 @statements_bp.route("/upload", methods=["POST"])
-@jwt_required()
 def upload():
-    user_id = get_jwt_identity()
+    user_id = DEV_USER_ID
 
     if "file" not in request.files:
         return jsonify({"error": "No file provided"}), 400
@@ -23,13 +22,11 @@ def upload():
 
     file_bytes = list(file.read())
 
-    # Create statement record
     statement_id = str(uuid.uuid4())
     supabase.table("statements").insert(
         {"id": statement_id, "user_id": user_id, "status": "pending"}
     ).execute()
 
-    # Enqueue job
     job_id = str(uuid.uuid4())
     enqueue(
         job_id,
@@ -45,7 +42,6 @@ def upload():
 
 
 @statements_bp.route("/job/<job_id>", methods=["GET"])
-@jwt_required()
 def job_status(job_id):
     job = get_job(job_id)
     if not job:

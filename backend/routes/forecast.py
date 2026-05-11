@@ -1,15 +1,14 @@
 from flask import Blueprint, request, jsonify
-from flask_jwt_extended import jwt_required, get_jwt_identity
 from db import supabase
 from ml.forecaster import forecast_spending
+from config import DEV_USER_ID
 
 forecast_bp = Blueprint("forecast", __name__)
 
 
 @forecast_bp.route("/", methods=["GET"])
-@jwt_required()
 def forecast():
-    user_id = get_jwt_identity()
+    user_id = DEV_USER_ID
     category = request.args.get("category")
     months = int(request.args.get("months", 3))
 

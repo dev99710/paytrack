@@ -1,14 +1,13 @@
 from flask import Blueprint, jsonify
-from flask_jwt_extended import jwt_required, get_jwt_identity
 from db import supabase
+from config import DEV_USER_ID
 
 score_bp = Blueprint("score", __name__)
 
 
 @score_bp.route("/", methods=["GET"])
-@jwt_required()
 def get_score():
-    user_id = get_jwt_identity()
+    user_id = DEV_USER_ID
     result = (
         supabase.table("scores")
         .select("*")
@@ -23,9 +22,8 @@ def get_score():
 
 
 @score_bp.route("/history", methods=["GET"])
-@jwt_required()
 def score_history():
-    user_id = get_jwt_identity()
+    user_id = DEV_USER_ID
     result = (
         supabase.table("scores")
         .select("score, grade, created_at")

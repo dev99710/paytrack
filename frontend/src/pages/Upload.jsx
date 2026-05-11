@@ -119,15 +119,13 @@ export default function Upload() {
     const formData = new FormData()
     formData.append('file', file)
     try {
-      const res = await api.post('/statements/upload', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      })
+      const res = await api.post('/statements/upload', formData)
       const { job_id } = res.data
       setJobId(job_id)
       setJobStatus('processing')
       pollJob(job_id)
     } catch (err) {
-      setError(err.response?.data?.message || 'Upload failed. Please try again.')
+      setError(err.response?.data?.error || 'Upload failed. Please try again.')
       setJobStatus(null)
     } finally {
       setUploading(false)

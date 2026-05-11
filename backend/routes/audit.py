@@ -1,14 +1,13 @@
 from flask import Blueprint, request, jsonify
-from flask_jwt_extended import jwt_required, get_jwt_identity
 from db import supabase
+from config import DEV_USER_ID
 
 audit_bp = Blueprint("audit", __name__)
 
 
 @audit_bp.route("/", methods=["GET"])
-@jwt_required()
 def get_audit():
-    user_id = get_jwt_identity()
+    user_id = DEV_USER_ID
     action = request.args.get("action")
     limit = int(request.args.get("limit", 50))
 
