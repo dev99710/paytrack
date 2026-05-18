@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, jsonify
 from flask_cors import CORS
 from workers.queue import start_worker
 from routes.statements import statements_bp
@@ -15,6 +15,20 @@ def create_app():
     app = Flask(__name__)
     CORS(app, origins="*", allow_headers=["Content-Type", "Authorization"],
          methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"])
+
+    # Ensure CORS headers are on every response, including error responses
+    @app.after_request
+    def add_cors(response):
+        response.headers["Access-Control-Allow-Origin"] = "*"
+        response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+        response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, PATCH, DELETE, OPTIONS"
+        return response
+
+    @app.errorhandler(Exception)
+    def handle_exception(e):
+        response = jsonify({"error": str(e)})
+        response.status_code = 500
+        return response
 
     start_worker()
     app.register_blueprint(statements_bp, url_prefix="/api/statements")

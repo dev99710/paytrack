@@ -23,9 +23,12 @@ def upload():
     file_bytes = list(file.read())
 
     statement_id = str(uuid.uuid4())
-    supabase.table("statements").insert(
-        {"id": statement_id, "user_id": user_id, "status": "pending"}
-    ).execute()
+    try:
+        supabase.table("statements").insert(
+            {"id": statement_id, "user_id": user_id, "status": "pending"}
+        ).execute()
+    except Exception as e:
+        return jsonify({"error": f"Database unavailable: {str(e)[:120]}"}), 503
 
     job_id = str(uuid.uuid4())
     enqueue(

@@ -1,5 +1,5 @@
-import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom'
-import Sidebar from './components/Sidebar'
+import { BrowserRouter, Routes, Route, Navigate, Outlet, useLocation } from 'react-router-dom'
+import Navbar from './components/Navbar'
 import Dashboard from './pages/Dashboard'
 import Upload from './pages/Upload'
 import Transactions from './pages/Transactions'
@@ -11,18 +11,14 @@ import RuleEngine from './pages/RuleEngine'
 import AuditLog from './pages/AuditLog'
 
 function Layout() {
+  const location = useLocation()
   return (
-    <div style={{ display: 'flex', height: '100vh', background: 'var(--bg-base)' }}>
-      <Sidebar />
-      <main
-        style={{
-          flex: 1,
-          overflowY: 'auto',
-          padding: '2rem',
-          marginLeft: '240px',
-        }}
-      >
-        <Outlet />
+    <div style={{ minHeight: '100vh', background: 'var(--bg-base)' }}>
+      <Navbar />
+      <main className="main-content">
+        <div key={location.pathname} className="page-enter">
+          <Outlet />
+        </div>
       </main>
     </div>
   )
